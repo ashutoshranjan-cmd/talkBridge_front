@@ -56,7 +56,7 @@ function App() {
       dispatch(setSocket(null));
     }
   };
-}, [authUser]); // Just keep authUser here
+}, [authUser,socket,dispatch]); // Just keep authUser here
 
 
   return (
