@@ -53,7 +53,7 @@ function App() {
       }
     }
 
-  }, [authUser,dispatch,socket]); // Added dispatch and socket to the dependency array
+  }, [authUser]); // Added dispatch and socket to the dependency array
 
   return (
     <div className="p-4 h-screen flex items-center justify-center">
