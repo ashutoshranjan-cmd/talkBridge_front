@@ -30,30 +30,34 @@ function App() {
   const { socket } = useSelector(store => store.socket);
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    if (authUser) {
-      const socketio = io(`${BASE_URL}`, {
-        query: {
-          userId: authUser._id
-        }
-      });
-      dispatch(setSocket(socketio));
-
-      socketio?.on('getOnlineUsers', (onlineUsers) => {
-        dispatch(setOnlineUsers(onlineUsers));
-      });
-
-      return () => {
-        socketio.close();
-      };
-    } else {
-      if (socket) {
-        socket.close();
-        dispatch(setSocket(null));
+ useEffect(() => {
+  let socketio; // Define socketio outside the effect to allow cleanup
+  if (authUser) {
+    socketio = io(`${BASE_URL}`, {
+      query: {
+        userId: authUser._id
       }
-    }
+    });
+    dispatch(setSocket(socketio));
 
-  }, [authUser]); // Added dispatch and socket to the dependency array
+    socketio.on('getOnlineUsers', (onlineUsers) => {
+      dispatch(setOnlineUsers(onlineUsers));
+    });
+  }
+
+  // Cleanup function
+  return () => {
+    if (socketio) {
+      socketio.close();
+    }
+    // Handle socket closing if user logs out
+    if (socket) {
+      socket.close();
+      dispatch(setSocket(null));
+    }
+  };
+}, [authUser]); // Just keep authUser here
+
 
   return (
     <div className="p-4 h-screen flex items-center justify-center">
